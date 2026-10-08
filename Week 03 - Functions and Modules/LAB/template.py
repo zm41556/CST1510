@@ -11,8 +11,11 @@ Run it:   python template.py
 """
 
 # =================================================================== FUNCTIONS
-"""This function find the status by comparing percentage with 100, 90, and other"""
+# This function decides the status using the percentage of the value against the limit.
+# If the value reaches 100% or more, it is over the limit. If it is close to the limit,
+# it is a warning. Otherwise it is acceptable.
 overlimit_count = 0
+
 
 def status_of(percent):
     global overlimit_count
@@ -27,29 +30,33 @@ def status_of(percent):
         status = "OK"
         return status
 
-"""This function calculate the diffrence and percent between given value and limit"""
+
+# This function calculates the difference between value and limit,
+# then works out the percentage relative to the limit. If the limit is zero,
+# the percentage is treated as 0 to avoid division by zero.
 def check(value, limit):
-    difference = (value - limit) if limit != 0 else 0
-    percent = (difference / limit * 100) if limit != 0 else 0  
+    difference = value - limit
+    percent = 0 if limit == 0 else (value / limit) * 100
     return difference, percent
 
-"""This function prints a detialed report of the given value, limit and
- also the returned status, difference, percent and the overlimit """
+
+# This function prints a neat report showing the label, values, and result status.
 def print_report(label, value, limit, difference, percent, status, overlimit_count):
-        print("=" * 34)
-        print(f"  RECORD CHECK  -  {label}")
-        print("=" * 34)
-        print("=" * 34)
-        print(f"  Value:      {value:>10.2f}")
-        print(f"  Limit:      {limit:>10.2f}")
-        print(f"  Difference: {difference:>10.2f}")
-        print(f"  Percentage: {percent:>10.2f}%")
-        print(f"  Status:     {status}")
-        print("=" * 34)
-        print(f"Over Limit Count: {overlimit_count}")
+    print("=" * 34)
+    print(f"  RECORD CHECK  -  {label}")
+    print("=" * 34)
+    print("=" * 34)
+    print(f"  Value:      {value:>10.2f}")
+    print(f"  Limit:      {limit:>10.2f}")
+    print(f"  Difference: {difference:>10.2f}")
+    print(f"  Percentage: {percent:>10.2f}%")
+    print(f"  Status:     {status}")
+    print("=" * 34)
+    print(f"Over Limit Count: {overlimit_count}")
 
 
 # ==================================================================== INPUT
+# Keep asking for records until the user chooses to quit.
 while True:
     label = input("Label (q to quit): ").strip()
     if label.lower() == "q" or label.lower() == "quit":
@@ -58,14 +65,14 @@ while True:
         break
 
     value = float(input("Enter Value: "))
-    limit = float(input("Enter Limit: ")) 
-    
+    limit = float(input("Enter Limit: "))
 
+    # ================================================================== PROCESS
+    # Calculate the difference and percentage, then classify the result.
+    difference, percent = check(value, limit)
+    status = status_of(percent)
 
- # ================================================================== PROCESS
-    difference, percent = check(value, limit)      
-    status = status_of(percent)  
-
- # =================================================================== OUTPUT
+    # =================================================================== OUTPUT
+    # Print the detailed record check result for this input.
     print_report(label, value, limit, difference, percent, status, overlimit_count)
 
